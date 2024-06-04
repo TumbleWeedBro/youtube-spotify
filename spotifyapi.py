@@ -1,10 +1,11 @@
 from dotenv import load_dotenv
+from youtubeapi import get_videoTitle
 import requests
 import os
 import base64
 import json
 import re
-from youtubeapi import get_videoTitle
+
 
 load_dotenv()
 
@@ -44,15 +45,32 @@ def get_track_id(token, song_name):
     return track_id
     # print(json_results)
 
+
+
+
+
+
+def create_playlist(track_id, user_name, playlist_name):
+    url = f"https://api.spotify.com/v1/users/{user_name}/playlists"
+    headers = get_auth_header(token)
+    data = {
+        "name": f"{playlist_name}",
+        "description": "This is a public playlist made by youtube-spotify",
+        "public": True
+    }
+    result = requests.post(url=url, headers=headers, data=data)
+    json_result = json.loads(result.content)
+    print(json_result)
+
 token = get_token()
 song_titles = get_videoTitle()
 print(song_titles)
 track_ids = []
-# # Original string
-for title in song_titles:
-    # Removing the text within brackets
-    song_name = re.sub(r'\s*\([^)]*\)', '', title)
-    track_ids.append(get_track_id(token, song_name))
+pattern = re.compile(r'\s*\([^)]*\)')
+# list comprehension
+track_ids = [get_track_id(token, pattern.sub('', title)) for title in song_titles]
 
 print(track_ids)
+create_playlist("44G2gUVQvNNZ6w3i05tR4n", "m1brvqi1dafdbj1h3szngrkyl",
+                "first_playlist")
 #done

@@ -55,7 +55,7 @@ def get_videoTitle():
 api_key = os.getenv("YOUTUBE_API_KEY")
 youtube = build('youtube', 'v3', developerKey=api_key)
 
-playlistId_source = 'PL9tY0BWXOZFsNzEZ8FkLLkyBeQ6XjUyLM'
+playlistId_source = 'PLs7ijEcGOG01Su9hxoclK6WO-HIagz_V5'
 playlist_Items = get_playlistItems(playlistId_source)
 
 
