@@ -1,4 +1,7 @@
 import requests
+import subprocess
+import threading
+import time
 import os
 import urllib.parse
 from datetime import datetime, timedelta
@@ -9,13 +12,25 @@ client_secret = os.getenv("CLIENT_SECRET")
 
 
 app = Flask(__name__)
-app.secret_key = '54648fsd6d5fg6-d46f5gd-s4df8g4s65'
+app.secret_key = '8491ert4er8-498sdgs-498dbdfgh1r8'
 
 REDIRECT_URI = 'http://localhost:5000/callback'
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 API_BASE_URL = 'https://api.spotify.com/v1/'
 
+def shutdown_server():
+    os._exit(0)
+
+
+def run_streamlit():
+    subprocess.run(["streamlit", "run", "main.py", "--server.port", "8502"])
+
+def start_streamlit():
+    streamlit_thread = threading.Thread(target=run_streamlit)
+    streamlit_thread.start()
+    time.sleep(2)
+  
 @app.route('/')
 def index():
     return "Welcome to my Spotify App <a href='/login'> Login with Spotify</a>"
@@ -57,7 +72,12 @@ def callback():
     session['expires_at'] = datetime.now().timestamp(
     ) + token_info['expires_in']
 
-    return redirect('/playlists')
+    # startstreamlit()
+   
+    threading.Thread(target=start_streamlit).start()
+   
+    time.sleep(2)
+    return redirect('http://localhost:8502')
 
 @app.route('/playlists')
 def get_playlist():
@@ -95,7 +115,16 @@ def refresh_token():
 
     return redirect('/playlists')
 
+
+
+@app.route('/main')
+def redirect_to_main():
+    exec(open('main.py').read())
+    
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
+
 
 # done
