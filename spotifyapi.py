@@ -1,13 +1,17 @@
 from dotenv import load_dotenv
-from youtubeapi import get_videoTitle
+from youtubeapi import get_playlistItems, get_videoTitle
+from flask import session
 import requests
 import os
 import base64
 import json
 import re
+import authorization
 
 
 load_dotenv()
+
+
 
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
@@ -30,7 +34,9 @@ def get_token():
     return token
 
 def get_auth_header(token):
-    return {"Authorization": "Bearer " + token}
+    return {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token}
 
 
 def get_track_id(token, song_name):
@@ -41,36 +47,22 @@ def get_track_id(token, song_name):
     query_url = url + query
     result = requests.get(query_url, headers=headers)
     json_result = json.loads(result.content)
-    track_id = json_result['tracks']['items'][0]['id']
+    track_id = "spotify:track:"+json_result['tracks']['items'][0]['id']
     return track_id
     # print(json_results)
 
+def run_spotifyapi(playlist_link):
+    playlist_Items = get_playlistItems(playlist_link)
+    token = get_token()
+    print(playlist_Items)
+    song_titles = get_videoTitle(playlist_Items)
+    print(song_titles)
+    # track_ids = []
+    pattern = re.compile(r'\s*\([^)]*\)')
+    # list comprehension
+    track_ids = [get_track_id(token, pattern.sub('', title)) for title in song_titles]
 
+    print(track_ids)
+    return track_ids
 
-
-
-
-def create_playlist(track_id, user_name, playlist_name):
-    url = f"https://api.spotify.com/v1/users/{user_name}/playlists"
-    headers = get_auth_header(token)
-    data = {
-        "name": f"{playlist_name}",
-        "description": "This is a public playlist made by youtube-spotify",
-        "public": True
-    }
-    result = requests.post(url=url, headers=headers, data=data)
-    json_result = json.loads(result.content)
-    print(json_result)
-
-token = get_token()
-song_titles = get_videoTitle()
-print(song_titles)
-track_ids = []
-pattern = re.compile(r'\s*\([^)]*\)')
-# list comprehension
-track_ids = [get_track_id(token, pattern.sub('', title)) for title in song_titles]
-
-print(track_ids)
-create_playlist("44G2gUVQvNNZ6w3i05tR4n", "m1brvqi1dafdbj1h3szngrkyl",
-                "first_playlist")
 #done

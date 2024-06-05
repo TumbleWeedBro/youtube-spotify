@@ -5,39 +5,39 @@ from googleapiclient.discovery import build
 load_dotenv()
 
 # functions
-def get_requestItems(playlistId_source):
+def get_requestItems(playlist_link):
     requestItems = youtube.playlistItems().list(
         part='contentDetails',
-        playlistId=playlistId_source,
+        playlistId=playlist_link,
         maxResults=5)
     response = requestItems.execute()
     # print(response)
     return response
 
-def get_requestItems_nextPage(playlistId_source, nextPageToken):
+def get_requestItems_nextPage(playlist_link, nextPageToken):
     requestItems = youtube.playlistItems().list(
     part='contentDetails',
-    playlistId=playlistId_source,
+    playlistId=playlist_link,
     maxResults=5,
     pageToken = nextPageToken)
     response = requestItems.execute()
     # print(response)
     return response
 
-def get_playlistItems(playlistId_source):
-    response = get_requestItems(playlistId_source)
+def get_playlistItems(playlist_link):
+    response = get_requestItems(playlist_link)
 
     playlistItems = response['items']
     nextPageToken = response.get('nextPageToken')
 
     while nextPageToken:
-        response = get_requestItems_nextPage(playlistId_source, nextPageToken)
+        response = get_requestItems_nextPage(playlist_link, nextPageToken)
         playlistItems.extend(response['items'])
         nextPageToken = response.get('nextPageToken')
     return playlistItems
 
 
-def get_videoTitle():
+def get_videoTitle(playlist_Items):
     song_titles = []
     for item in playlist_Items:
         # get video id
@@ -54,9 +54,6 @@ def get_videoTitle():
 
 api_key = os.getenv("YOUTUBE_API_KEY")
 youtube = build('youtube', 'v3', developerKey=api_key)
-
-playlistId_source = 'PLs7ijEcGOG01Su9hxoclK6WO-HIagz_V5'
-playlist_Items = get_playlistItems(playlistId_source)
 
 
 
