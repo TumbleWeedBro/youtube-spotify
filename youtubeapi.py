@@ -4,6 +4,8 @@ from googleapiclient.discovery import build
 
 load_dotenv()
 
+api_key = os.getenv("YOUTUBE_API_KEY")
+youtube = build('youtube', 'v3', developerKey=api_key)
 # functions
 def get_requestItems(playlist_link):
     requestItems = youtube.playlistItems().list(
@@ -52,8 +54,7 @@ def get_videoTitle(playlist_Items):
 
     return song_titles
 
-api_key = os.getenv("YOUTUBE_API_KEY")
-youtube = build('youtube', 'v3', developerKey=api_key)
+
 
 
 

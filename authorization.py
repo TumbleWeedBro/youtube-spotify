@@ -27,13 +27,13 @@ app.secret_key = '8491ert4er8-498sdgs-498dbdfgh1r8'
 def shutdown_server():
     os._exit(0)
 
-def run_streamlit():
-    subprocess.run(["streamlit", "run", "main.py", "--server.port", "8502", "--server.headless", "true"])
+# def run_streamlit():
+#     subprocess.run(["streamlit", "run", "main.py", "--server.port", "8502", "--server.headless", "true"])
 
-def start_streamlit():
-    streamlit_thread = threading.Thread(target=run_streamlit)
-    streamlit_thread.start()
-    time.sleep(2)
+# def start_streamlit():
+#     streamlit_thread = threading.Thread(target=run_streamlit)
+#     streamlit_thread.start()
+#     time.sleep(2)
 
 def get_user_id(headers):
     user_profile_url = f"{API_BASE_URL}me"
@@ -88,21 +88,6 @@ def callback():
 
     return redirect("http://localhost:8501")
 
-
-@app.route('/playlists')
-def get_playlist():
-    if 'access_token' not in session:
-        return redirect('/login')
-
-    if datetime.now().timestamp() > session['expires_at']:
-        return redirect('/refresh-token')
-
-    headers = {'authorization': f"Bearer {session['access_token']}"}
-    response = requests.get(API_BASE_URL + 'me/playlist', headers=headers)
-    playlists = response.json()
-
-    return jsonify(playlists)
-
 @app.route('/refresh-token')
 def refresh_token():
     if 'refresh_token' not in session:
@@ -124,13 +109,6 @@ def refresh_token():
     ) + new_token_info['expires_in']
 
     return redirect('/playlists')
-
-
-
-@app.route('/main')
-def redirect_to_main():
-    exec(open('main.py').read())
-    
 
 
 if __name__ == '__main__':

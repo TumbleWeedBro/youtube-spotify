@@ -48,7 +48,7 @@ def add_to_playlist(track_ids):
         "uris": track_ids
     }
     response = requests.post(url=url, headers=headers, json=request_body)
-    if response.status_code == 201:
+    if response.ok:
         st.write("Songs added to playlist successfully")
         st.write(f"Songs added - {len(track_ids)} ") 
         return True
