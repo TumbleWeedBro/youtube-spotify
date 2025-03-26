@@ -20,7 +20,7 @@ client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
 
 app = Flask(__name__)
-app.secret_key = '8491ert4er8-498sdgs-498dbdfgh1r8'
+app.secret_key = ''
 
 
 
